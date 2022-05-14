@@ -6,7 +6,7 @@
 
 ##
 #
-#   Genshin Impact script for mitmproxy
+#   Anime game script for mitmproxy
 #
 #   https://github.com/MlgmXyysd/
 #
@@ -16,55 +16,82 @@
 #     - mitmdump from mitmproxy
 #
 #   @author MlgmXyysd
-#   @version 1.1
+#   @version 1.0
 #
 ##
 
+import string
+from mitmproxy import ctx
 from mitmproxy import http
-from proxy_config import USE_SSL
-from proxy_config import REMOTE_HOST
-from proxy_config import REMOTE_PORT
 
-class MlgmXyysd_Genshin_Impact_Proxy:
+class MlgmXyysd_Anime_Game_Proxy:
 
-    LIST_DOMAINS = [
-        "api-os-takumi.mihoyo.com",
-        "hk4e-api-os-static.mihoyo.com",
-        "hk4e-sdk-os.mihoyo.com",
-        "dispatchosglobal.yuanshen.com",
-        "osusadispatch.yuanshen.com",
-        "account.mihoyo.com",
-        "log-upload-os.mihoyo.com",
-        "dispatchcntest.yuanshen.com",
-        "devlog-upload.mihoyo.com",
-        "webstatic.mihoyo.com",
-        "log-upload.mihoyo.com",
-        "hk4e-sdk.mihoyo.com",
-        "api-beta-sdk.mihoyo.com",
-        "api-beta-sdk-os.mihoyo.com",
-        "cnbeta01dispatch.yuanshen.com",
-        "dispatchcnglobal.yuanshen.com",
-        "cnbeta02dispatch.yuanshen.com",
-        "sdk-os-static.mihoyo.com",
-        "webstatic-sea.mihoyo.com",
-        "webstatic-sea.hoyoverse.com",
-        "hk4e-sdk-os-static.hoyoverse.com",
-        "sdk-os-static.hoyoverse.com",
-        "api-account-os.hoyoverse.com",
-        "hk4e-sdk-os.hoyoverse.com",
-        "overseauspider.yuanshen.com",
-        "gameapi-account.mihoyo.com",
-        "minor-api.mihoyo.com",
-        "public-data-api.mihoyo.com",
-        "uspider.yuanshen.com",
-        "sdk-static.mihoyo.com",
-        "abtest-api-data-sg.hoyoverse.com",
-        "log-upload-os.hoyoverse.com"
-    ]
+    def load(self, loader):
+        loader.add_option(
+            name = "ip",
+            typespec = str,
+            default = "genshin.zzuli.top",
+            help = "IP address to replace",
+        )
+
+        loader.add_option(
+            name = "port",
+            typespec = int,
+            default = 22103,
+            help = "Port to replace",
+        )
+
+        loader.add_option(
+            name = "use_https",
+            typespec = bool,
+            default = True,
+            help = "Use HTTPS",
+        )
 
     def request(self, flow: http.HTTPFlow) -> None:
-        if flow.request.host in self.LIST_DOMAINS:
-            if USE_SSL:
+        # This can also be replaced with another IP address.
+        REMOTE_HOST = ctx.options.ip
+        REMOTE_PORT = ctx.options.port
+        
+        LIST_DOMAINS = [
+            "api-os-takumi.mihoyo.com",
+            "hk4e-api-os-static.mihoyo.com",
+            "hk4e-sdk-os.mihoyo.com",
+            "dispatchosglobal.yuanshen.com",
+            "osusadispatch.yuanshen.com",
+            "account.mihoyo.com",
+            "log-upload-os.mihoyo.com",
+            "dispatchcntest.yuanshen.com",
+            "devlog-upload.mihoyo.com",
+            "webstatic.mihoyo.com",
+            "log-upload.mihoyo.com",
+            "hk4e-sdk.mihoyo.com",
+            "api-beta-sdk.mihoyo.com",
+            "api-beta-sdk-os.mihoyo.com",
+            "cnbeta01dispatch.yuanshen.com",
+            "dispatchcnglobal.yuanshen.com",
+            "cnbeta02dispatch.yuanshen.com",
+            "sdk-os-static.mihoyo.com",
+            "webstatic-sea.mihoyo.com",
+            "webstatic-sea.hoyoverse.com",
+            "hk4e-sdk-os-static.hoyoverse.com",
+            "sdk-os-static.hoyoverse.com",
+            "api-account-os.hoyoverse.com",
+            "hk4e-sdk-os.hoyoverse.com",
+            "overseauspider.yuanshen.com",
+            "gameapi-account.mihoyo.com",
+            "minor-api.mihoyo.com",
+            "public-data-api.mihoyo.com",
+            "uspider.yuanshen.com",
+            "sdk-static.mihoyo.com",
+            "abtest-api-data-sg.hoyoverse.com",
+            "log-upload-os.hoyoverse.com",
+            "autopatchhk.yuanshen.com",
+            "app.adjust.com"
+        ]
+        
+        if flow.request.host in LIST_DOMAINS:
+            if ctx.options.use_https:
                 flow.request.scheme = "https"
             else:
                 flow.request.scheme = "http"
@@ -72,5 +99,5 @@ class MlgmXyysd_Genshin_Impact_Proxy:
             flow.request.port = REMOTE_PORT
 
 addons = [
-	MlgmXyysd_Genshin_Impact_Proxy()
+	MlgmXyysd_Anime_Game_Proxy()
 ]
